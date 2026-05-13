@@ -21,7 +21,12 @@ export default function SearchScreen() {
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 300);
 
-  const { data: searchResults, isLoading: searching } = useQuery({
+  const {
+    data: searchResults,
+    isLoading: searching,
+    isError: searchError,
+    refetch: retrySearch,
+  } = useQuery({
     queryKey: ["searchMovies", debouncedQuery],
     queryFn: () => searchMovies(debouncedQuery),
     enabled: debouncedQuery.length > 0,
@@ -55,6 +60,16 @@ export default function SearchScreen() {
         // Search Results
         searching ? (
           <LoadingSpinner message="검색 중..." />
+        ) : searchError ? (
+          <View className="flex-1 justify-center">
+            <EmptyState
+              icon="cloud-offline-outline"
+              title="검색에 실패했습니다"
+              description="네트워크 상태를 확인한 뒤 다시 시도해주세요."
+              actionLabel="다시 시도"
+              onAction={() => retrySearch()}
+            />
+          </View>
         ) : searchResults?.results && searchResults.results.length > 0 ? (
           <FlatList
             data={searchResults.results}

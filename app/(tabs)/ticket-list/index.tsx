@@ -17,21 +17,28 @@ export default function TicketListScreen() {
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 300);
 
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ["reviews", debouncedQuery],
-      queryFn: ({ pageParam = 1 }) =>
-        reviewApi.getReviews({
-          page: pageParam,
-          limit: PAGE_SIZE,
-          search: debouncedQuery || undefined,
-        }),
-      getNextPageParam: (lastPage) =>
-        lastPage.currentPage < lastPage.totalPages
-          ? lastPage.currentPage + 1
-          : undefined,
-      initialPageParam: 1,
-    });
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["reviews", debouncedQuery],
+    queryFn: ({ pageParam = 1 }) =>
+      reviewApi.getReviews({
+        page: pageParam,
+        limit: PAGE_SIZE,
+        search: debouncedQuery || undefined,
+      }),
+    getNextPageParam: (lastPage) =>
+      lastPage.currentPage < lastPage.totalPages
+        ? lastPage.currentPage + 1
+        : undefined,
+    initialPageParam: 1,
+  });
 
   const reviews = data?.pages.flatMap((page) => page.reviews) ?? [];
 
@@ -53,7 +60,17 @@ export default function TicketListScreen() {
         />
       </View>
 
-      {reviews.length > 0 ? (
+      {isError ? (
+        <View className="flex-1 justify-center">
+          <EmptyState
+            icon="cloud-offline-outline"
+            title="티켓 목록을 불러오지 못했습니다"
+            description="네트워크 상태를 확인한 뒤 다시 시도해주세요."
+            actionLabel="다시 시도"
+            onAction={() => refetch()}
+          />
+        </View>
+      ) : reviews.length > 0 ? (
         <FlatList
           data={reviews}
           renderItem={({ item }) => <ReviewCard review={item} />}

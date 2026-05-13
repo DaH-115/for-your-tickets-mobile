@@ -17,6 +17,7 @@ import VideoPlayer from "@/components/movie/VideoPlayer";
 import MoviePoster from "@/components/movie/MoviePoster";
 import MovieCertification from "@/components/movie/MovieCertification";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import EmptyState from "@/components/ui/EmptyState";
 import DottedDivider from "@/components/ui/DottedDivider";
 import TicketPattern from "@/components/ui/TicketPattern";
 import { fetchMovieDetails, fetchSimilarMovies } from "@/services/tmdb/movies";
@@ -93,7 +94,12 @@ export default function MovieDetailScreen() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const movieId = Number(id);
 
-  const { data: movie, isLoading } = useQuery({
+  const {
+    data: movie,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["movieDetails", movieId],
     queryFn: () => fetchMovieDetails(movieId),
     enabled: !!movieId,
@@ -117,8 +123,34 @@ export default function MovieDetailScreen() {
     enabled: !!movieId,
   });
 
-  if (isLoading || !movie) {
+  if (isLoading) {
     return <LoadingSpinner message="영화 정보를 불러오는 중..." />;
+  }
+
+  if (!movieId || isError || !movie) {
+    return (
+      <SafeAreaView className="flex-1 bg-background">
+        <View className="px-4 pt-2">
+          <Pressable
+            onPress={() => router.back()}
+            className="flex-row items-center"
+            hitSlop={12}
+          >
+            <Ionicons name="arrow-back" size={22} color={COLORS.textPrimary} />
+            <Text className="ml-2 text-base text-text-primary">뒤로</Text>
+          </Pressable>
+        </View>
+        <View className="flex-1 justify-center">
+          <EmptyState
+            icon="film-outline"
+            title="영화 정보를 불러오지 못했습니다"
+            description="영화가 삭제되었거나 네트워크 연결이 불안정할 수 있습니다."
+            actionLabel="다시 시도"
+            onAction={() => refetch()}
+          />
+        </View>
+      </SafeAreaView>
+    );
   }
 
   const backdropUrl = getTmdbBackdropUrl(movie.backdrop_path);

@@ -16,6 +16,7 @@ import MovieCarousel from "@/components/swiper/MovieCarousel";
 import MoviePoster from "@/components/movie/MoviePoster";
 import ReviewCard from "@/components/review/ReviewCard";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import EmptyState from "@/components/ui/EmptyState";
 import ProfileHeaderButton from "@/components/ui/ProfileHeaderButton";
 import {
   fetchNowPlayingMovies,
@@ -31,7 +32,12 @@ const BG_HEIGHT = Math.round(SCREEN_HEIGHT * 0.7);
 export default function HomeScreen() {
   const router = useRouter();
 
-  const { data: nowPlaying, isLoading: loadingNow } = useQuery({
+  const {
+    data: nowPlaying,
+    isLoading: loadingNow,
+    isError: nowPlayingError,
+    refetch: refetchNowPlaying,
+  } = useQuery({
     queryKey: ["nowPlaying"],
     queryFn: () => fetchNowPlayingMovies(),
   });
@@ -48,6 +54,28 @@ export default function HomeScreen() {
 
   if (loadingNow) {
     return <LoadingSpinner message="영화 정보를 불러오는 중..." />;
+  }
+
+  if (nowPlayingError) {
+    return (
+      <SafeAreaView className="flex-1 bg-background">
+        <View className="flex-row items-center justify-between px-4 pt-8 pb-4">
+          <Text className="text-xl font-bold text-white/80">
+            For Your Tickets
+          </Text>
+          <ProfileHeaderButton />
+        </View>
+        <View className="flex-1 justify-center">
+          <EmptyState
+            icon="cloud-offline-outline"
+            title="영화 정보를 불러오지 못했습니다"
+            description="네트워크 상태를 확인한 뒤 다시 시도해주세요."
+            actionLabel="다시 시도"
+            onAction={() => refetchNowPlaying()}
+          />
+        </View>
+      </SafeAreaView>
+    );
   }
 
   const firstMovie = nowPlaying?.results?.[0];
