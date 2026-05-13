@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { User as FirebaseUser } from "firebase/auth";
 import type { User } from "@/types/user";
-import { subscribeToAuthState, getAuthHeaders } from "@/services/firebase/auth";
-import { API_BASE_URL } from "@/utils/constants";
+import { subscribeToAuthState } from "@/services/firebase/auth";
+import { userApi } from "@/services/api/userApi";
 
 interface AuthState {
   user: User | null;
@@ -78,14 +78,7 @@ export const useAuthStore = create<AuthState & AuthActions>((set, get) => ({
   fetchUserProfile: async (uid) => {
     try {
       set({ status: "loading", error: null });
-      const headers = await getAuthHeaders();
-      const response = await fetch(`${API_BASE_URL}/api/users/${uid}`, {
-        headers: { ...headers, "Content-Type": "application/json" },
-      });
-
-      if (!response.ok) throw new Error("프로필 조회 실패");
-
-      const profile: User = await response.json();
+      const profile = await userApi.getProfile(uid);
       set((state) => ({
         status: "succeeded",
         user: state.user ? { ...state.user, ...profile } : profile,
@@ -105,16 +98,7 @@ export const useAuthStore = create<AuthState & AuthActions>((set, get) => ({
   updateUserProfile: async (uid, data) => {
     try {
       set({ status: "loading", error: null });
-      const headers = await getAuthHeaders();
-      const response = await fetch(`${API_BASE_URL}/api/users/${uid}`, {
-        method: "PUT",
-        headers: { ...headers, "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) throw new Error("프로필 업데이트 실패");
-
-      const result = await response.json();
+      const result = await userApi.updateProfile(uid, data);
       set((state) => ({
         status: "succeeded",
         user: state.user

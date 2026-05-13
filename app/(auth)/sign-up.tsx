@@ -20,7 +20,7 @@ import { Ionicons } from "@expo/vector-icons";
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import { useAlertStore } from "@/stores/useAlertStore";
-import { API_BASE_URL } from "@/utils/constants";
+import { apiClient } from "@/services/api/client";
 import { COLORS } from "@/constants/theme";
 
 const signUpSchema = z
@@ -73,20 +73,15 @@ export default function SignUpScreen() {
     try {
       setLoading(true);
 
-      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      await apiClient.post(
+        "/api/auth/signup",
+        {
           displayName: data.displayName,
           email: data.email,
           password: data.password,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "회원가입에 실패했습니다.");
-      }
+        },
+        { auth: false }
+      );
 
       showToast("회원가입이 완료되었습니다!", "success");
       router.replace({
