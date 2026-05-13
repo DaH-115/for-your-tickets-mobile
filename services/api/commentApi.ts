@@ -13,9 +13,7 @@ export interface Comment {
 
 export const commentApi = {
   getComments: (reviewId: string) =>
-    apiClient.get<{ comments: Comment[] }>(
-      `/api/reviews/${reviewId}/comments`
-    ),
+    apiClient.get<{ comments: Comment[] }>(`/api/reviews/${reviewId}/comments`),
 
   createComment: (reviewId: string, authorId: string, content: string) =>
     apiClient.post<{ success: boolean; id: string; message: string }>(
@@ -24,10 +22,9 @@ export const commentApi = {
     ),
 
   updateComment: (reviewId: string, commentId: string, content: string) =>
-    apiClient.put<Comment>(
-      `/api/reviews/${reviewId}/comments/${commentId}`,
-      { content }
-    ),
+    apiClient.put<Comment>(`/api/reviews/${reviewId}/comments/${commentId}`, {
+      content,
+    }),
 
   deleteComment: (reviewId: string, commentId: string) =>
     apiClient.delete(`/api/reviews/${reviewId}/comments/${commentId}`),

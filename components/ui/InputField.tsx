@@ -30,9 +30,7 @@ export default function InputField({
         autoCapitalize="none"
         {...props}
       />
-      {hasError && (
-        <Text className="mt-1 text-xs text-red-500">{error}</Text>
-      )}
+      {hasError && <Text className="mt-1 text-xs text-red-500">{error}</Text>}
     </View>
   );
 }

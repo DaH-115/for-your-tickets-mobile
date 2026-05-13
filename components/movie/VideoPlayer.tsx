@@ -22,7 +22,10 @@ export default function VideoPlayer({ videoKey, title }: VideoPlayerProps) {
         }}
       />
       {title && (
-        <Text className="mt-2 text-base font-semibold text-text-secondary" numberOfLines={1}>
+        <Text
+          className="mt-2 text-base font-semibold text-text-secondary"
+          numberOfLines={1}
+        >
           {title}
         </Text>
       )}

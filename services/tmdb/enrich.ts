@@ -98,8 +98,7 @@ export async function enrichMovies(movies: MovieList[]): Promise<MovieList[]> {
 
   return movies.map((movie) => ({
     ...movie,
-    genres:
-      movie.genre_ids?.map((id) => genreMap[id]).filter(Boolean) ?? [],
+    genres: movie.genre_ids?.map((id) => genreMap[id]).filter(Boolean) ?? [],
     certification: certMapById.get(movie.id) ?? null,
   }));
 }

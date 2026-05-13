@@ -2,10 +2,7 @@
 module.exports = {
   // 웹에서 NativeWind / css-interop가 colorScheme을 다루려면 class 모드 필요 (media면 런타임 오류)
   darkMode: "class",
-  content: [
-    "./app/**/*.{js,jsx,ts,tsx}",
-    "./components/**/*.{js,jsx,ts,tsx}",
-  ],
+  content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
   theme: {
     extend: {

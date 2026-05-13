@@ -27,23 +27,18 @@ export default function WriteNewReviewScreen() {
   const queryClient = useQueryClient();
   const showToast = useAlertStore((s) => s.showToast);
   const { triggerSuccess } = useHaptics();
-  const { isAuthenticated, authLoading } = useProtectedRoute();
+  const { authLoading } = useProtectedRoute();
   const user = useAuthStore((s) => s.user);
   const fetchUserProfile = useAuthStore((s) => s.fetchUserProfile);
 
-  const {
-    movieId,
-    movieTitle,
-    originalTitle,
-    posterPath,
-    releaseYear,
-  } = useLocalSearchParams<{
-    movieId: string;
-    movieTitle: string;
-    originalTitle: string;
-    posterPath: string;
-    releaseYear: string;
-  }>();
+  const { movieId, movieTitle, originalTitle, posterPath, releaseYear } =
+    useLocalSearchParams<{
+      movieId: string;
+      movieTitle: string;
+      originalTitle: string;
+      posterPath: string;
+      releaseYear: string;
+    }>();
 
   const [rating, setRating] = useState(0);
   const [reviewTitle, setReviewTitle] = useState("");

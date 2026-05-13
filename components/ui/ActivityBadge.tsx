@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
-import type { UserLevel } from "@/types/user";
 
-const badgeConfig: Record<string, { bg: string; text: string; label: string }> = {
-  NEWBIE: { bg: "bg-gray-600", text: "text-gray-200", label: "NEWBIE" },
-  REGULAR: { bg: "bg-blue-600", text: "text-blue-100", label: "REGULAR" },
-  ACTIVE: { bg: "bg-purple-600", text: "text-purple-100", label: "ACTIVE" },
-  EXPERT: { bg: "bg-amber-600", text: "text-amber-100", label: "EXPERT" },
-};
+const badgeConfig: Record<string, { bg: string; text: string; label: string }> =
+  {
+    NEWBIE: { bg: "bg-gray-600", text: "text-gray-200", label: "NEWBIE" },
+    REGULAR: { bg: "bg-blue-600", text: "text-blue-100", label: "REGULAR" },
+    ACTIVE: { bg: "bg-purple-600", text: "text-purple-100", label: "ACTIVE" },
+    EXPERT: { bg: "bg-amber-600", text: "text-amber-100", label: "EXPERT" },
+  };
 
 interface ActivityBadgeProps {
   level: string;

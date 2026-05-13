@@ -7,8 +7,13 @@ import type { ReviewDoc } from "@/types/review";
 
 export function useOfflineTickets() {
   const user = useAuthStore((s) => s.user);
-  const { isOffline, cachedTickets, lastSyncTime, loadCachedTickets, updateCache } =
-    useOfflineStore();
+  const {
+    isOffline,
+    cachedTickets,
+    lastSyncTime,
+    loadCachedTickets,
+    updateCache,
+  } = useOfflineStore();
 
   // Load cache on mount
   useEffect(() => {

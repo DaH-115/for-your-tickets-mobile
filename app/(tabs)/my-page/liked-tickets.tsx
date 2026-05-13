@@ -1,4 +1,10 @@
-import { View, Text, FlatList, Pressable, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -51,11 +57,17 @@ export default function LikedTicketsScreen() {
           renderItem={({ item }) => <ReviewCard review={item} />}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingHorizontal: 16 }}
-          onEndReached={() => hasNextPage && !isFetchingNextPage && fetchNextPage()}
+          onEndReached={() =>
+            hasNextPage && !isFetchingNextPage && fetchNextPage()
+          }
           onEndReachedThreshold={0.3}
           ListFooterComponent={
             isFetchingNextPage ? (
-              <ActivityIndicator size="small" color={COLORS.accent} style={{ padding: 16 }} />
+              <ActivityIndicator
+                size="small"
+                color={COLORS.accent}
+                style={{ padding: 16 }}
+              />
             ) : null
           }
         />

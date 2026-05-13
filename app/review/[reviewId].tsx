@@ -78,10 +78,18 @@ export default function ReviewDetailScreen() {
                   onPress={() => router.push(`/review/write/${reviewId}`)}
                   className="mr-4"
                 >
-                  <Ionicons name="create-outline" size={22} color={COLORS.textPrimary} />
+                  <Ionicons
+                    name="create-outline"
+                    size={22}
+                    color={COLORS.textPrimary}
+                  />
                 </Pressable>
                 <Pressable onPress={() => deleteMutation.mutate()}>
-                  <Ionicons name="trash-outline" size={22} color={COLORS.error} />
+                  <Ionicons
+                    name="trash-outline"
+                    size={22}
+                    color={COLORS.error}
+                  />
                 </Pressable>
               </>
             )}

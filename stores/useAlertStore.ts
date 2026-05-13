@@ -25,9 +25,7 @@ export const useAlertStore = create<AlertStoreState>((set) => ({
 
   hideToast: () => set({ toast: null }),
 
-  showLevelUpModal: (level) =>
-    set({ levelUpModal: { isOpen: true, level } }),
+  showLevelUpModal: (level) => set({ levelUpModal: { isOpen: true, level } }),
 
-  hideLevelUpModal: () =>
-    set({ levelUpModal: { isOpen: false, level: "" } }),
+  hideLevelUpModal: () => set({ levelUpModal: { isOpen: false, level: "" } }),
 }));

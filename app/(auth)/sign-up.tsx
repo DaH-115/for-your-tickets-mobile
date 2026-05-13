@@ -92,7 +92,7 @@ export default function SignUpScreen() {
     } catch (error) {
       showToast(
         error instanceof Error ? error.message : "회원가입에 실패했습니다.",
-        "error",
+        "error"
       );
     } finally {
       setLoading(false);

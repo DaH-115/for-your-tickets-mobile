@@ -30,7 +30,11 @@ export default function MyPageScreen() {
     return (
       <SafeAreaView className="flex-1 bg-background">
         <View className="flex-1 items-center justify-center px-6">
-          <Ionicons name="person-circle-outline" size={64} color={COLORS.textMuted} />
+          <Ionicons
+            name="person-circle-outline"
+            size={64}
+            color={COLORS.textMuted}
+          />
           <Text className="mt-4 text-lg font-bold text-text-primary">
             로그인이 필요합니다
           </Text>
@@ -104,7 +108,10 @@ export default function MyPageScreen() {
                 {user.email}
               </Text>
               {user.biography && (
-                <Text className="mt-2 text-base text-text-secondary" numberOfLines={2}>
+                <Text
+                  className="mt-2 text-base text-text-secondary"
+                  numberOfLines={2}
+                >
                   {user.biography}
                 </Text>
               )}
@@ -146,7 +153,11 @@ export default function MyPageScreen() {
               style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
             >
               <View className="flex-row items-center">
-                <Ionicons name={item.icon} size={20} color={COLORS.textSecondary} />
+                <Ionicons
+                  name={item.icon}
+                  size={20}
+                  color={COLORS.textSecondary}
+                />
                 <Text className="ml-3 text-base text-text-primary">
                   {item.label}
                 </Text>
@@ -155,7 +166,11 @@ export default function MyPageScreen() {
                 {item.count !== undefined && (
                   <Text className="mr-2 text-sm text-accent">{item.count}</Text>
                 )}
-                <Ionicons name="chevron-forward" size={18} color={COLORS.textMuted} />
+                <Ionicons
+                  name="chevron-forward"
+                  size={18}
+                  color={COLORS.textMuted}
+                />
               </View>
             </Pressable>
           ))}

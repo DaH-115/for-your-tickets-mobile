@@ -36,7 +36,7 @@ export default function MovieCarousel({ movies }: MovieCarouselProps) {
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
       // viewability tracking if needed
-    },
+    }
   ).current;
 
   const viewabilityConfig = useRef({

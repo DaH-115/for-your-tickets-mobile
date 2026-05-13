@@ -40,8 +40,13 @@ export default function CommentList({ reviewId }: CommentListProps) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ commentId, content }: { commentId: string; content: string }) =>
-      commentApi.updateComment(reviewId, commentId, content),
+    mutationFn: ({
+      commentId,
+      content,
+    }: {
+      commentId: string;
+      content: string;
+    }) => commentApi.updateComment(reviewId, commentId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", reviewId] });
     },

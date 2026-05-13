@@ -22,7 +22,8 @@ export default function Button({
 }: ButtonProps) {
   const isDisabled = disabled || loading;
 
-  const baseClass = "w-full rounded-2xl p-4 items-center justify-center flex-row";
+  const baseClass =
+    "w-full rounded-2xl p-4 items-center justify-center flex-row";
   const variantClass = {
     primary: "bg-accent",
     secondary: "bg-surface-light border border-gray-600",
