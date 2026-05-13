@@ -128,14 +128,22 @@ export default function MovieDetailScreen() {
     ? splitOverviewIntoParagraphs(movie.overview)
     : [];
 
+  const writeReviewPath =
+    `/review/write/new?movieId=${movie.id}` +
+    `&movieTitle=${encodeURIComponent(movie.title)}` +
+    `&originalTitle=${encodeURIComponent(movie.original_title)}` +
+    `&posterPath=${encodeURIComponent(movie.poster_path || "")}` +
+    `&releaseYear=${movie.release_date?.slice(0, 4)}`;
+
   const handleWriteReview = () => {
     if (!isAuthenticated) {
-      router.push("/(auth)/login");
+      router.push({
+        pathname: "/(auth)/login",
+        params: { returnTo: writeReviewPath },
+      });
       return;
     }
-    router.push(
-      `/review/write/new?movieId=${movie.id}&movieTitle=${encodeURIComponent(movie.title)}&originalTitle=${encodeURIComponent(movie.original_title)}&posterPath=${encodeURIComponent(movie.poster_path || "")}&releaseYear=${movie.release_date?.slice(0, 4)}`
-    );
+    router.push(writeReviewPath);
   };
 
   return (

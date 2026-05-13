@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   Platform,
   Pressable,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,8 +33,24 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+function getSafeRedirectPath(returnTo?: string | string[]) {
+  const path = Array.isArray(returnTo) ? returnTo[0] : returnTo;
+
+  if (!path || !path.startsWith("/") || path.startsWith("//")) {
+    return "/(tabs)/home";
+  }
+
+  if (path.startsWith("/(auth)") || path.startsWith("/login")) {
+    return "/(tabs)/home";
+  }
+
+  return path;
+}
+
 export default function LoginScreen() {
   const router = useRouter();
+  const { returnTo } = useLocalSearchParams<{ returnTo?: string | string[] }>();
+  const redirectPath = useMemo(() => getSafeRedirectPath(returnTo), [returnTo]);
   const showToast = useAlertStore((s) => s.showToast);
   const [loading, setLoading] = useState(false);
 
@@ -56,7 +72,7 @@ export default function LoginScreen() {
       setLoading(true);
       await signInWithEmail(data.email, data.password);
       showToast("로그인 성공!", "success");
-      router.replace("/(tabs)/home");
+      router.replace(redirectPath);
     } catch {
       showToast("이메일 또는 비밀번호가 올바르지 않습니다.", "error");
     } finally {
@@ -169,7 +185,12 @@ export default function LoginScreen() {
             {/* Sign Up Link */}
             <Pressable
               className="mt-6 items-center"
-              onPress={() => router.push("/(auth)/sign-up")}
+              onPress={() =>
+                router.push({
+                  pathname: "/(auth)/sign-up",
+                  params: { returnTo: redirectPath },
+                })
+              }
             >
               <Text className="text-base text-text-secondary">
                 계정이 없으신가요?{" "}
