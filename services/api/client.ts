@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@/utils/constants";
 import { getAuthHeaders } from "@/services/firebase/auth";
+import { assertOkResponse, fetchWithTimeout, readJsonBody } from "@/utils/http";
 
 interface RequestOptions extends Omit<RequestInit, "headers"> {
   headers?: Record<string, string>;
@@ -14,7 +15,7 @@ async function request<T>(
 
   const authHeaders = requireAuth ? await getAuthHeaders() : {};
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const response = await fetchWithTimeout(`${API_BASE_URL}${endpoint}`, {
     ...rest,
     headers: {
       "Content-Type": "application/json",
@@ -23,14 +24,9 @@ async function request<T>(
     },
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(
-      errorData.error || `API Error: ${response.status} ${response.statusText}`
-    );
-  }
+  await assertOkResponse(response);
 
-  return response.json();
+  return (await readJsonBody<T>(response)) as T;
 }
 
 export const apiClient = {

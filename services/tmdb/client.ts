@@ -1,4 +1,5 @@
 import { TMDB_BASE_URL, TMDB_API_KEY } from "@/utils/constants";
+import { assertOkResponse, fetchWithTimeout, readJsonBody } from "@/utils/http";
 
 export async function tmdbFetch<T>(
   endpoint: string,
@@ -10,11 +11,11 @@ export async function tmdbFetch<T>(
     ...params,
   });
 
-  const response = await fetch(`${TMDB_BASE_URL}${endpoint}?${searchParams}`);
+  const response = await fetchWithTimeout(
+    `${TMDB_BASE_URL}${endpoint}?${searchParams}`
+  );
 
-  if (!response.ok) {
-    throw new Error(`TMDB API Error: ${response.status}`);
-  }
+  await assertOkResponse(response);
 
-  return response.json();
+  return (await readJsonBody<T>(response)) as T;
 }
