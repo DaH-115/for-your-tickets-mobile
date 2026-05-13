@@ -151,7 +151,7 @@ export default function LoginScreen() {
                 onPress={() => {
                   showToast(
                     "Google 로그인은 Development Build에서 지원됩니다.",
-                    "info",
+                    "info"
                   );
                 }}
               >

@@ -1,10 +1,7 @@
 import { create } from "zustand";
 import { User as FirebaseUser } from "firebase/auth";
 import type { User } from "@/types/user";
-import {
-  subscribeToAuthState,
-  getAuthHeaders,
-} from "@/services/firebase/auth";
+import { subscribeToAuthState, getAuthHeaders } from "@/services/firebase/auth";
 import { API_BASE_URL } from "@/utils/constants";
 
 interface AuthState {

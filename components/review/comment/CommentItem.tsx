@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { View, Text, Pressable, TextInput } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 import Avatar from "@/components/ui/Avatar";
 import { useAuthStore } from "@/stores/useAuthStore";

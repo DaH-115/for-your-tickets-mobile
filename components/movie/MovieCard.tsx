@@ -36,7 +36,10 @@ export default function MovieCard({ movie }: MovieCardProps) {
         </View>
       )}
       <View className="ml-3 flex-1 justify-center">
-        <Text className="text-base font-bold text-text-primary" numberOfLines={2}>
+        <Text
+          className="text-base font-bold text-text-primary"
+          numberOfLines={2}
+        >
           {movie.title}
         </Text>
         {movie.original_title !== movie.title && (

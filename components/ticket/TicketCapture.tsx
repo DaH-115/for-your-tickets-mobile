@@ -18,10 +18,7 @@ const TicketCapture = forwardRef<ViewShot, TicketCaptureProps>(
     const posterUrl = getTmdbPosterUrl(review.review.moviePosterPath);
 
     return (
-      <ViewShot
-        ref={ref}
-        options={{ format: "png", quality: 1 }}
-      >
+      <ViewShot ref={ref} options={{ format: "png", quality: 1 }}>
         <View
           style={{
             backgroundColor: COLORS.surface,

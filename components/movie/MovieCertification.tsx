@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 interface MovieCertificationProps {
@@ -34,9 +34,7 @@ export default function MovieCertification({
   if (!certification || certification.trim() === "") return null;
 
   const colors = certGradients[certification] ?? DEFAULT_GRADIENT;
-  const label = knownKeys.has(certification)
-    ? certLabels[certification]
-    : null;
+  const label = knownKeys.has(certification) ? certLabels[certification] : null;
 
   return (
     <LinearGradient
@@ -51,9 +49,7 @@ export default function MovieCertification({
         justifyContent: "center",
       }}
     >
-      {label && (
-        <Text className="text-xs font-bold text-white">{label}</Text>
-      )}
+      {label && <Text className="text-xs font-bold text-white">{label}</Text>}
     </LinearGradient>
   );
 }

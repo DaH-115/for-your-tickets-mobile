@@ -20,8 +20,7 @@ export async function registerForPushNotifications(): Promise<string | null> {
   }
 
   // 권한 요청
-  const { status: existingStatus } =
-    await Notifications.getPermissionsAsync();
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
 
   if (existingStatus !== "granted") {

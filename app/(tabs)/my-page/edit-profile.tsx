@@ -104,22 +104,26 @@ export default function EditProfileScreen() {
   };
 
   const handleDeleteAccount = () => {
-    Alert.alert("회원탈퇴", "정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.", [
-      { text: "취소", style: "cancel" },
-      {
-        text: "탈퇴",
-        style: "destructive",
-        onPress: async () => {
-          if (!user?.uid) return;
-          try {
-            await userApi.deleteAccount(user.uid);
-            showToast("회원탈퇴가 완료되었습니다.", "success");
-          } catch {
-            showToast("회원탈퇴에 실패했습니다.", "error");
-          }
+    Alert.alert(
+      "회원탈퇴",
+      "정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+      [
+        { text: "취소", style: "cancel" },
+        {
+          text: "탈퇴",
+          style: "destructive",
+          onPress: async () => {
+            if (!user?.uid) return;
+            try {
+              await userApi.deleteAccount(user.uid);
+              showToast("회원탈퇴가 완료되었습니다.", "success");
+            } catch {
+              showToast("회원탈퇴에 실패했습니다.", "error");
+            }
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   if (authLoading || !user) return null;
@@ -134,7 +138,11 @@ export default function EditProfileScreen() {
           {/* Header */}
           <View className="flex-row items-center px-4 pt-2 pb-4">
             <Pressable onPress={() => router.back()} hitSlop={12}>
-              <Ionicons name="arrow-back" size={22} color={COLORS.textPrimary} />
+              <Ionicons
+                name="arrow-back"
+                size={22}
+                color={COLORS.textPrimary}
+              />
             </Pressable>
             <Text className="ml-3 text-lg font-bold text-text-primary">
               프로필 편집

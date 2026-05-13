@@ -12,7 +12,7 @@ interface TicketPatternProps {
 const PHRASE = "For your Ticket.";
 
 // [x, y] 좌표 (원본 SVG 그대로)
-const POSITIONS: Array<[number, number]> = [
+const POSITIONS: [number, number][] = [
   [-220, -32],
   [-20, -32],
   [180, -32],

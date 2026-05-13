@@ -14,8 +14,7 @@ export const likeApi = {
 
   // 여러 리뷰 좋아요 여부 일괄 조회 (웹 API: POST /api/reviews/likes)
   getLikesMap: (reviewIds: string[]) =>
-    apiClient.post<{ likes: Record<string, boolean> }>(
-      "/api/reviews/likes",
-      { reviewIds }
-    ),
+    apiClient.post<{ likes: Record<string, boolean> }>("/api/reviews/likes", {
+      reviewIds,
+    }),
 };

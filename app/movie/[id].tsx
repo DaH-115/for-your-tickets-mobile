@@ -134,7 +134,7 @@ export default function MovieDetailScreen() {
       return;
     }
     router.push(
-      `/review/write/new?movieId=${movie.id}&movieTitle=${encodeURIComponent(movie.title)}&originalTitle=${encodeURIComponent(movie.original_title)}&posterPath=${encodeURIComponent(movie.poster_path || "")}&releaseYear=${movie.release_date?.slice(0, 4)}`,
+      `/review/write/new?movieId=${movie.id}&movieTitle=${encodeURIComponent(movie.title)}&originalTitle=${encodeURIComponent(movie.original_title)}&posterPath=${encodeURIComponent(movie.poster_path || "")}&releaseYear=${movie.release_date?.slice(0, 4)}`
     );
   };
 

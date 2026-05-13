@@ -27,10 +27,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         {/* 상단: 영화 제목 + 원제(년도) | No.{orderNumber} */}
         <View className="mb-3 flex-row items-start justify-between">
           <View className="flex-1 pr-2">
-            <Text
-              className="text-lg font-bold text-gray-900"
-              numberOfLines={1}
-            >
+            <Text className="text-lg font-bold text-gray-900" numberOfLines={1}>
               {r.movieTitle}
             </Text>
             <Text

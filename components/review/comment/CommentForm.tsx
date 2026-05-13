@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, TextInput, Pressable, Text } from "react-native";
+import { View, TextInput, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useAuthStore } from "@/stores/useAuthStore";
