@@ -10,6 +10,7 @@ import CommentList from "@/components/review/comment/CommentList";
 import TicketCapture from "@/components/ticket/TicketCapture";
 import Avatar from "@/components/ui/Avatar";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import EmptyState from "@/components/ui/EmptyState";
 import { reviewApi } from "@/services/api/reviewApi";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useAlertStore } from "@/stores/useAlertStore";
@@ -29,7 +30,12 @@ export default function ReviewDetailScreen() {
   const { viewShotRef, captureAndShare } = useTicketShare();
   const { triggerWarning } = useHaptics();
 
-  const { data: review, isLoading } = useQuery({
+  const {
+    data: review,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["review", reviewId],
     queryFn: () => reviewApi.getReview(reviewId!),
     enabled: !!reviewId,
@@ -47,8 +53,34 @@ export default function ReviewDetailScreen() {
   });
   const authorPhotoUrl = usePhotoUrl(review?.user.photoKey);
 
-  if (isLoading || !review) {
+  if (isLoading) {
     return <LoadingSpinner message="리뷰를 불러오는 중..." />;
+  }
+
+  if (!reviewId || isError || !review) {
+    return (
+      <SafeAreaView className="flex-1 bg-background">
+        <View className="px-4 pt-2">
+          <Pressable
+            onPress={() => router.back()}
+            className="flex-row items-center"
+            hitSlop={12}
+          >
+            <Ionicons name="arrow-back" size={22} color={COLORS.textPrimary} />
+            <Text className="ml-2 text-base text-text-primary">뒤로</Text>
+          </Pressable>
+        </View>
+        <View className="flex-1 justify-center">
+          <EmptyState
+            icon="ticket-outline"
+            title="리뷰를 불러오지 못했습니다"
+            description="리뷰가 삭제되었거나 네트워크 연결이 불안정할 수 있습니다."
+            actionLabel="다시 시도"
+            onAction={() => refetch()}
+          />
+        </View>
+      </SafeAreaView>
+    );
   }
 
   const isOwner = user?.uid === review.user.uid;
