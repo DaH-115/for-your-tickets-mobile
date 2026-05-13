@@ -7,7 +7,7 @@ import {
   Platform,
   Pressable,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -49,6 +49,7 @@ type SignUpFormValues = z.infer<typeof signUpSchema>;
 
 export default function SignUpScreen() {
   const router = useRouter();
+  const { returnTo } = useLocalSearchParams<{ returnTo?: string }>();
   const insets = useSafeAreaInsets();
   const showToast = useAlertStore((s) => s.showToast);
   const [loading, setLoading] = useState(false);
@@ -88,7 +89,10 @@ export default function SignUpScreen() {
       }
 
       showToast("회원가입이 완료되었습니다!", "success");
-      router.replace("/(auth)/login");
+      router.replace({
+        pathname: "/(auth)/login",
+        params: returnTo ? { returnTo } : undefined,
+      });
     } catch (error) {
       showToast(
         error instanceof Error ? error.message : "회원가입에 실패했습니다.",
@@ -219,7 +223,12 @@ export default function SignUpScreen() {
             {/* Login Link */}
             <Pressable
               className="mt-6 items-center"
-              onPress={() => router.replace("/(auth)/login")}
+              onPress={() =>
+                router.replace({
+                  pathname: "/(auth)/login",
+                  params: returnTo ? { returnTo } : undefined,
+                })
+              }
             >
               <Text className="text-base text-text-secondary">
                 이미 계정이 있으신가요?{" "}
