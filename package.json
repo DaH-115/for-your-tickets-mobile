@@ -8,9 +8,10 @@
     "ios": "expo start --ios",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"app/**/*.{js,jsx,ts,tsx}\" \"components/**/*.{js,jsx,ts,tsx}\" \"constants/**/*.{js,jsx,ts,tsx}\" \"hooks/**/*.{js,jsx,ts,tsx}\" \"services/**/*.{js,jsx,ts,tsx}\" \"stores/**/*.{js,jsx,ts,tsx}\" \"types/**/*.{js,jsx,ts,tsx}\" \"utils/**/*.{js,jsx,ts,tsx}\" \"*.{js,ts}\"",
+    "test": "jest --runInBand",
     "format": "prettier \"**/*.{js,jsx,ts,tsx,json,css,md,yml,yaml}\" --write",
     "format:check": "prettier \"**/*.{js,jsx,ts,tsx,json,css,md,yml,yaml}\" --check",
-    "check": "npm run typecheck && npm run lint && npm run format:check"
+    "check": "npm run typecheck && npm run lint && npm run test && npm run format:check"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
@@ -50,9 +51,11 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
     "eslint": "^9.39.1",
     "eslint-config-expo": "^55.0.0",
+    "jest": "^30.4.2",
     "prettier": "^3.8.3",
     "typescript": "~5.9.2"
   },
