@@ -63,3 +63,55 @@ describe("HTTP helpers", () => {
     ).rejects.toBeInstanceOf(HttpError);
   });
 });
+
+describe("S3 API helpers", () => {
+  beforeEach(() => {
+    jest.resetModules();
+  });
+
+  it("requests review upload URLs with the review purpose", async () => {
+    jest.doMock("../services/api/client", () => ({
+      apiClient: {
+        post: jest.fn().mockResolvedValue({
+          url: "https://example.com/upload",
+          key: "review-img/user-id/photo.jpg",
+        }),
+      },
+    }));
+
+    const { s3Api } = require("../services/api/s3Api");
+    const { apiClient } = require("../services/api/client");
+
+    await s3Api.getUploadUrl("photo.jpg", "image/jpeg", 1234, "review");
+
+    expect(apiClient.post).toHaveBeenCalledWith("/api/s3", {
+      filename: "photo.jpg",
+      contentType: "image/jpeg",
+      size: 1234,
+      purpose: "review",
+    });
+  });
+
+  it("defaults upload URL requests to the profile purpose", async () => {
+    jest.doMock("../services/api/client", () => ({
+      apiClient: {
+        post: jest.fn().mockResolvedValue({
+          url: "https://example.com/upload",
+          key: "profile-img/user-id/photo.jpg",
+        }),
+      },
+    }));
+
+    const { s3Api } = require("../services/api/s3Api");
+    const { apiClient } = require("../services/api/client");
+
+    await s3Api.getUploadUrl("photo.jpg", "image/jpeg", 1234);
+
+    expect(apiClient.post).toHaveBeenCalledWith("/api/s3", {
+      filename: "photo.jpg",
+      contentType: "image/jpeg",
+      size: 1234,
+      purpose: "profile",
+    });
+  });
+});
