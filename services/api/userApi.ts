@@ -7,8 +7,22 @@ interface UpdateProfileData {
   photoKey?: string;
 }
 
+interface SocialProfileResult {
+  success: boolean;
+  message: string;
+  data: {
+    uid: string;
+    isNewUser: boolean;
+    displayName: string;
+    provider: "google" | "github";
+  };
+}
+
 export const userApi = {
   getProfile: (uid: string) => apiClient.get<User>(`/api/users/${uid}`),
+
+  initSocialProfile: (provider: "google" | "github") =>
+    apiClient.post<SocialProfileResult>("/api/users/me/profile", { provider }),
 
   updateProfile: (uid: string, data: UpdateProfileData) =>
     apiClient.put<User>(`/api/users/${uid}`, data),

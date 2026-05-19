@@ -16,7 +16,13 @@ import { Ionicons } from "@expo/vector-icons";
 
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
-import { signInWithEmail } from "@/services/firebase/auth";
+import {
+  isGoogleSignInCancelled,
+  signInWithEmail,
+  signInWithGoogle,
+} from "@/services/firebase/auth";
+import { userApi } from "@/services/api/userApi";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { useAlertStore } from "@/stores/useAlertStore";
 import { COLORS } from "@/constants/theme";
 
@@ -52,6 +58,7 @@ export default function LoginScreen() {
   const { returnTo } = useLocalSearchParams<{ returnTo?: string | string[] }>();
   const redirectPath = useMemo(() => getSafeRedirectPath(returnTo), [returnTo]);
   const showToast = useAlertStore((s) => s.showToast);
+  const fetchUserProfile = useAuthStore((s) => s.fetchUserProfile);
   const [loading, setLoading] = useState(false);
 
   const {
@@ -75,6 +82,25 @@ export default function LoginScreen() {
       router.replace(redirectPath);
     } catch {
       showToast("이메일 또는 비밀번호가 올바르지 않습니다.", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onGoogleLogin = async () => {
+    try {
+      setLoading(true);
+      const result = await signInWithGoogle();
+      if (result.cancelled) return;
+
+      await userApi.initSocialProfile("google");
+      await fetchUserProfile(result.userCredential.user.uid);
+
+      showToast("Google 로그인 성공!", "success");
+      router.replace(redirectPath);
+    } catch (error) {
+      if (isGoogleSignInCancelled(error)) return;
+      showToast("Google 로그인에 실패했습니다.", "error");
     } finally {
       setLoading(false);
     }
@@ -164,12 +190,8 @@ export default function LoginScreen() {
               {/* Social Login - Google */}
               <Pressable
                 className="mb-3 flex-row items-center justify-center rounded-2xl bg-surface-light p-4"
-                onPress={() => {
-                  showToast(
-                    "Google 로그인은 Development Build에서 지원됩니다.",
-                    "info"
-                  );
-                }}
+                disabled={loading}
+                onPress={onGoogleLogin}
               >
                 <Ionicons
                   name="logo-google"
