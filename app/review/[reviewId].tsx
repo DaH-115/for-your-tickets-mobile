@@ -6,6 +6,7 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 
 import ReviewLikeButton from "@/components/review/ReviewLikeButton";
+import ReviewPhotoGrid from "@/components/review/ReviewPhotoGrid";
 import CommentList from "@/components/review/comment/CommentList";
 import TicketCapture from "@/components/ticket/TicketCapture";
 import Avatar from "@/components/ui/Avatar";
@@ -190,6 +191,8 @@ export default function ReviewDetailScreen() {
               {review.review.reviewContent}
             </Text>
           </View>
+
+          <ReviewPhotoGrid photoKeys={review.review.photoKeys} />
 
           {/* Like Button */}
           <View className="mt-4 flex-row">

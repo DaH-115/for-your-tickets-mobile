@@ -1,5 +1,6 @@
 import { Pressable, View, Text } from "react-native";
 import { useRouter } from "expo-router";
+import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 
 import Avatar from "@/components/ui/Avatar";
@@ -16,6 +17,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
   const router = useRouter();
   const { user, review: r, orderNumber } = review;
   const photoUrl = usePhotoUrl(user.photoKey);
+  const firstReviewPhotoUrl = usePhotoUrl(r.photoKeys?.[0]);
 
   return (
     <Pressable
@@ -67,6 +69,19 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         >
           &quot;{r.reviewTitle}&quot;
         </Text>
+
+        {firstReviewPhotoUrl && (
+          <Image
+            source={{ uri: firstReviewPhotoUrl }}
+            style={{
+              width: "100%",
+              height: 160,
+              borderRadius: 8,
+              marginBottom: 24,
+            }}
+            contentFit="cover"
+          />
+        )}
 
         {/* 하단: 날짜 ↔ 별+평점 */}
         <View className="flex-row items-center justify-between">

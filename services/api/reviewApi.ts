@@ -42,6 +42,7 @@ export const reviewApi = {
       rating: number;
       reviewTitle: string;
       reviewContent: string;
+      photoKeys?: string[];
     };
   }) =>
     apiClient.post<{ success: boolean; id: string; message: string }>(
@@ -62,6 +63,7 @@ export const reviewApi = {
       rating?: number;
       reviewTitle?: string;
       reviewContent?: string;
+      photoKeys?: string[];
     }
   ) => apiClient.put<ReviewDoc>(`/api/reviews/${id}`, data),
 

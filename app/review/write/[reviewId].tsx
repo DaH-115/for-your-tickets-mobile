@@ -10,17 +10,102 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type InfiniteData,
+} from "@tanstack/react-query";
 import { Ionicons } from "@expo/vector-icons";
 
 import StarRating from "@/components/ui/StarRating";
 import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import ReviewPhotoPicker from "@/components/review/ReviewPhotoPicker";
 import { reviewApi } from "@/services/api/reviewApi";
+import { uploadReviewPhotos } from "@/services/api/reviewPhotoUpload";
 import { useProtectedRoute } from "@/hooks/useProtectedRoute";
 import { useAlertStore } from "@/stores/useAlertStore";
 import { useHaptics } from "@/hooks/useHaptics";
 import { COLORS } from "@/constants/theme";
+import type { ReviewDoc } from "@/types/review";
+import type { ReviewPhotoDraft } from "@/types/reviewPhoto";
+
+interface ReviewsCache {
+  reviews: ReviewDoc[];
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+}
+
+function isReviewsCache(data: unknown): data is ReviewsCache {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    Array.isArray((data as ReviewsCache).reviews)
+  );
+}
+
+function isInfiniteReviewsCache(
+  data: unknown
+): data is InfiniteData<ReviewsCache> {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    Array.isArray((data as InfiniteData<ReviewsCache>).pages)
+  );
+}
+
+function updateReviewItem(
+  review: ReviewDoc,
+  reviewId: string,
+  patch: Pick<
+    ReviewDoc["review"],
+    "rating" | "reviewTitle" | "reviewContent" | "photoKeys"
+  >
+) {
+  if (review.id !== reviewId) return review;
+
+  return {
+    ...review,
+    review: {
+      ...review.review,
+      ...patch,
+    },
+  };
+}
+
+function updateReviewsCache(
+  data: unknown,
+  reviewId: string,
+  patch: Pick<
+    ReviewDoc["review"],
+    "rating" | "reviewTitle" | "reviewContent" | "photoKeys"
+  >
+) {
+  if (isInfiniteReviewsCache(data)) {
+    return {
+      ...data,
+      pages: data.pages.map((page) => ({
+        ...page,
+        reviews: page.reviews.map((review) =>
+          updateReviewItem(review, reviewId, patch)
+        ),
+      })),
+    };
+  }
+
+  if (isReviewsCache(data)) {
+    return {
+      ...data,
+      reviews: data.reviews.map((review) =>
+        updateReviewItem(review, reviewId, patch)
+      ),
+    };
+  }
+
+  return data;
+}
 
 export default function EditReviewScreen() {
   const { reviewId } = useLocalSearchParams<{ reviewId: string }>();
@@ -39,27 +124,83 @@ export default function EditReviewScreen() {
   const [rating, setRating] = useState(0);
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewContent, setReviewContent] = useState("");
+  const [reviewPhotos, setReviewPhotos] = useState<ReviewPhotoDraft[]>([]);
 
   useEffect(() => {
     if (review) {
       setRating(review.review.rating);
       setReviewTitle(review.review.reviewTitle);
       setReviewContent(review.review.reviewContent);
+      setReviewPhotos(
+        (review.review.photoKeys ?? []).map((photoKey, index) => ({
+          id: `existing-${index}-${photoKey}`,
+          photoKey,
+        }))
+      );
     }
   }, [review]);
 
   const updateMutation = useMutation({
-    mutationFn: () =>
-      reviewApi.updateReview(reviewId!, {
+    mutationFn: async () => {
+      const uploadedPhotoKeys = await uploadReviewPhotos(reviewPhotos);
+      let uploadedPhotoIndex = 0;
+      const photoKeys = reviewPhotos
+        .map((photo) => {
+          if (photo.photoKey) return photo.photoKey;
+          const uploadedPhotoKey = uploadedPhotoKeys[uploadedPhotoIndex];
+          uploadedPhotoIndex += 1;
+          return uploadedPhotoKey;
+        })
+        .filter((photoKey): photoKey is string => !!photoKey);
+
+      await reviewApi.updateReview(reviewId!, {
         rating,
         reviewTitle,
         reviewContent,
-      }),
-    onSuccess: () => {
+        photoKeys,
+      });
+
+      return { photoKeys };
+    },
+    onSuccess: ({ photoKeys }) => {
       triggerSuccess();
       showToast("리뷰가 수정되었습니다!", "success");
-      queryClient.invalidateQueries({ queryKey: ["review", reviewId] });
-      queryClient.invalidateQueries({ queryKey: ["reviews"] });
+      const reviewPatch = {
+        rating,
+        reviewTitle,
+        reviewContent,
+        photoKeys,
+      };
+
+      queryClient.setQueryData<typeof review>(
+        ["review", reviewId],
+        (cachedReview) => {
+          const currentReview = cachedReview ?? review;
+
+          if (!currentReview) return currentReview;
+
+          return {
+            ...currentReview,
+            user: currentReview.user,
+            review: {
+              ...currentReview.review,
+              ...reviewPatch,
+            },
+          };
+        }
+      );
+      queryClient.setQueriesData({ queryKey: ["reviews"] }, (data) =>
+        updateReviewsCache(data, reviewId!, reviewPatch)
+      );
+      queryClient.setQueriesData({ queryKey: ["latestReviews"] }, (data) =>
+        updateReviewsCache(data, reviewId!, reviewPatch)
+      );
+      queryClient.setQueriesData({ queryKey: ["myTickets"] }, (data) =>
+        updateReviewsCache(data, reviewId!, reviewPatch)
+      );
+      queryClient.setQueriesData({ queryKey: ["myReviews"] }, (data) =>
+        updateReviewsCache(data, reviewId!, reviewPatch)
+      );
       router.back();
     },
     onError: () => showToast("리뷰 수정에 실패했습니다.", "error"),
@@ -154,12 +295,18 @@ export default function EditReviewScreen() {
               </Text>
             </View>
 
+            <ReviewPhotoPicker
+              photos={reviewPhotos}
+              onChange={setReviewPhotos}
+              disabled={updateMutation.isPending}
+            />
+
             {/* Submit */}
             <Button
               title="리뷰 수정"
               onPress={() => updateMutation.mutate()}
               loading={updateMutation.isPending}
-              disabled={!isValid}
+              disabled={!isValid || updateMutation.isPending}
               className="mt-6 mb-8"
             />
           </View>

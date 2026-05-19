@@ -1,15 +1,25 @@
 import { apiClient } from "./client";
 
+export type S3UploadPurpose = "profile" | "review";
+
 export const s3Api = {
   /**
    * 업로드용 presigned URL 요청 (POST /api/s3)
-   * 서버가 key 경로 생성 (profile-img/{uid}/{timestamp}_{filename})
+   * 서버가 purpose에 맞는 key 경로 생성
+   * - profile: profile-img/{uid}/{timestamp}_{filename}
+   * - review: review-img/{uid}/{timestamp}_{filename}
    */
-  getUploadUrl: (filename: string, contentType: string, size: number) =>
+  getUploadUrl: (
+    filename: string,
+    contentType: string,
+    size: number,
+    purpose: S3UploadPurpose = "profile"
+  ) =>
     apiClient.post<{ url: string; key: string }>("/api/s3", {
       filename,
       contentType,
       size,
+      purpose,
     }),
 
   /**

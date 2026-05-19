@@ -15,7 +15,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.foryourtickets.mobile"
+      "bundleIdentifier": "com.foryourtickets.mobile",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,14 +24,24 @@
         "backgroundColor": "#121212"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.foryourtickets.mobile"
+      "package": "com.foryourtickets.mobile",
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA"
+      ]
     },
     "plugins": [
       "expo-router",
       "expo-image-picker",
       "expo-camera",
-      "expo-notifications",
-      "expo-sharing"
-    ]
+      "expo-notifications"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "3bedc953-24c5-4bac-b30c-60b149f6e3d2"
+      }
+    }
   }
 }

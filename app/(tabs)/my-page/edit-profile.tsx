@@ -65,7 +65,8 @@ export default function EditProfileScreen() {
         const { url, key } = await s3Api.getUploadUrl(
           filename,
           contentType,
-          blob.size
+          blob.size,
+          "profile"
         );
         await s3Api.uploadImage(url, asset.uri, contentType);
         await updateUserProfile(user.uid, { photoKey: key });

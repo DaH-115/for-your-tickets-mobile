@@ -15,12 +15,15 @@ import { Ionicons } from "@expo/vector-icons";
 
 import StarRating from "@/components/ui/StarRating";
 import Button from "@/components/ui/Button";
+import ReviewPhotoPicker from "@/components/review/ReviewPhotoPicker";
 import { reviewApi } from "@/services/api/reviewApi";
+import { uploadReviewPhotos } from "@/services/api/reviewPhotoUpload";
 import { useProtectedRoute } from "@/hooks/useProtectedRoute";
 import { useAlertStore } from "@/stores/useAlertStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useHaptics } from "@/hooks/useHaptics";
 import { COLORS } from "@/constants/theme";
+import type { ReviewPhotoDraft } from "@/types/reviewPhoto";
 
 export default function WriteNewReviewScreen() {
   const router = useRouter();
@@ -43,10 +46,13 @@ export default function WriteNewReviewScreen() {
   const [rating, setRating] = useState(0);
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewContent, setReviewContent] = useState("");
+  const [reviewPhotos, setReviewPhotos] = useState<ReviewPhotoDraft[]>([]);
 
   const createMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       if (!user?.uid) throw new Error("로그인이 필요합니다.");
+      const photoKeys = await uploadReviewPhotos(reviewPhotos);
+
       return reviewApi.createReview({
         user: {
           uid: user.uid,
@@ -62,6 +68,7 @@ export default function WriteNewReviewScreen() {
           rating,
           reviewTitle,
           reviewContent,
+          photoKeys,
         },
       });
     },
@@ -176,6 +183,12 @@ export default function WriteNewReviewScreen() {
                 {reviewContent.length}/2000
               </Text>
             </View>
+
+            <ReviewPhotoPicker
+              photos={reviewPhotos}
+              onChange={setReviewPhotos}
+              disabled={createMutation.isPending}
+            />
 
             {/* Submit */}
             <Button
