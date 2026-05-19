@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - main
 
 jobs:
   check:
@@ -26,5 +27,14 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Run checks
-        run: npm run check
+      - name: Typecheck
+        run: yarn typecheck
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Test
+        run: yarn test
+
+      - name: Format check
+        run: yarn format:check
