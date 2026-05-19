@@ -1,6 +1,7 @@
 {
   "name": "for-your-tickets-mobile",
   "version": "1.0.0",
+  "packageManager": "yarn@1.22.22",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
@@ -11,7 +12,7 @@
     "test": "jest --runInBand",
     "format": "prettier \"**/*.{js,jsx,ts,tsx,json,css,md,yml,yaml}\" --write",
     "format:check": "prettier \"**/*.{js,jsx,ts,tsx,json,css,md,yml,yaml}\" --check",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run format:check"
+    "check": "yarn typecheck && yarn lint && yarn test && yarn format:check"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
